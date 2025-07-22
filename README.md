@@ -1,4 +1,4 @@
-# HPC Infrastructure Automation 
+# HPC Infrastructure
 
 ## Repository Overview
 
