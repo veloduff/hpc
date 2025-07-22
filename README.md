@@ -53,10 +53,9 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 ### Lustre Components ([`Lustre/`](Lustre/))
 - **[`setup_lustre.sh`](Lustre/setup_lustre.sh)**: Master Lustre deployment orchestrator
 - **[`fix_lustre_hosts_files.sh`](Lustre/fix_lustre_hosts_files.sh)**: Network and hostname management
-- **[`disk_management.sh`](Lustre/disk_management.sh)**: Lustre-specific disk management utilities
-- **[`pcluster_lustre.yaml`](Lustre/pcluster_lustre.yaml)**: ParallelCluster configuration template for Lustre
 - **[`README.md`](Lustre/README.md)**: Complete Lustre setup and configuration guide
 - **[`lustre.md`](Lustre/lustre.md)**: Lustre filesystem documentation
+- **[`customize_pc_ami_lustre.md`](Lustre/customize_pc_ami_lustre.md)**: ParallelCluster AMI customization guide
 
 ### Ansible Automation ([`ansible-playbooks/pcluster-lustre/`](ansible-playbooks/pcluster-lustre/))
 - **[`run-pcluster-lustre.sh`](ansible-playbooks/pcluster-lustre/run-pcluster-lustre.sh)**: Interactive cluster deployment with size presets
@@ -79,21 +78,16 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 - **Automated session management** and user provisioning
 
 ### GPFS Support ([`GPFS/`](GPFS/))
-- **[`gpfs_spectrum_storage.md`](GPFS/gpfs_spectrum_storage.md)**: IBM Spectrum Scale installation and configuration
-- **[`gpfs_install.sh`](GPFS/gpfs_install.sh)**: Automated GPFS installation script
+- **[`README.md`](GPFS/README.md)**: IBM Spectrum Scale installation and configuration guide
+- **[`archived-gpfs_install.sh`](GPFS/archived-gpfs_install.sh)**: Archived GPFS installation script
 
 ### Scheduler Documentation ([`Schedulers/`](Schedulers/))
-- **[`slurm.md`](Schedulers/slurm.md)**: Slurm workload manager configuration and usage
+- **[`README.md`](Schedulers/README.md)**: Scheduler documentation and configuration guides
 
 ### Additional Ansible Playbooks
 - **[`ansible-playbooks/instance-launch/`](ansible-playbooks/instance-launch/)**: Basic EC2 instance deployment
 - **[`ansible-playbooks/pcluster-basic-setup/`](ansible-playbooks/pcluster-basic-setup/)**: Basic ParallelCluster setup
 - **[`ansible-playbooks/pcluster-advanced-setup/`](ansible-playbooks/pcluster-advanced-setup/)**: Advanced ParallelCluster configurations
-- **[`ansible-playbooks/pcluster-generic/`](ansible-playbooks/pcluster-generic/)**: Generic ParallelCluster templates
-
-### Additional Resources
-- **[`presentations/`](presentations/)**: Technical presentations and documentation
-- **[`_assets/`](_assets/)**: ISO files and installation media for benchmarking tools
 
 ## Quick Start Guide
 
@@ -142,6 +136,6 @@ cd DCV/
 2. **Choose your path**: 
    - Basic cluster: Start with [`Cluster_Setup/README.md`](Cluster_Setup/README.md)
    - Lustre filesystem: Use [`ansible-playbooks/pcluster-lustre/run-pcluster-lustre.sh`](ansible-playbooks/pcluster-lustre/run-pcluster-lustre.sh)
-   - GPFS filesystem: Follow [`GPFS/gpfs_spectrum_storage.md`](GPFS/gpfs_spectrum_storage.md)
+   - GPFS filesystem: Follow [`GPFS/README.md`](GPFS/README.md)
 3. **Benchmark**: Use tools in [`Benchmarking/`](Benchmarking/) to validate performance
 4. **Monitor**: Leverage built-in monitoring and debugging capabilities
