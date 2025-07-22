@@ -86,6 +86,8 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 - **[`ansible-playbooks/pcluster-advanced-setup/`](ansible-playbooks/pcluster-advanced-setup/)**: Advanced ParallelCluster configurations
 
 
+### Getting started 
+
 1. **Prerequisites**: Ensure AWS CLI and ParallelCluster are configured
 2. **Choose your path**: 
    - Basic cluster: Start with [`Cluster_Setup/README.md`](Cluster_Setup/README.md)
