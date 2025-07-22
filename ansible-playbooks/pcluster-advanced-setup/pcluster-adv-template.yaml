@@ -1,0 +1,50 @@
+Region: {{ region }}
+Image:
+  Os: {{ os_type }}
+  CustomAmi: {{ custom_ami }}
+Monitoring:
+  DetailedMonitoring: true
+HeadNode:
+  InstanceType: {{ headnode_instance_type }}
+  DisableSimultaneousMultithreading: false
+  Ssh:
+    KeyName: {{ key_name }}
+  Networking:
+    ElasticIp: true   # true|false|EIP-id
+    SubnetId: {{ headnode_subnet_id }}
+    AdditionalSecurityGroups:
+      - sg-02b7b66da8adb15cc             # SG Name: corp-prefix-all-regions
+  LocalStorage:
+    RootVolume:
+      VolumeType: gp3
+      Size: 200
+  Iam:
+    AdditionalIamPolicies:
+      - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - Policy: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - Policy: arn:aws:iam::aws:policy/AmazonEC2FullAccess 
+AdditionalPackages:
+  IntelSoftware:
+    IntelHpcPlatform: false              # true|false Installs Intel Parallel Studio on the head node 
+Scheduling:
+  Scheduler: slurm
+  SlurmSettings:
+    ScaledownIdletime: 10
+    Dns:
+      DisableManagedDns: true
+  SlurmQueues:
+  - Name: batch01
+    CapacityType: ONDEMAND
+    Networking:
+      SubnetIds: 
+        - {{ compute_subnet_id }}
+      PlacementGroup:
+        Enabled: true
+        Name: cluster-01-placement-group-01 
+    ComputeResources:
+    - Name: batch 
+      InstanceType: {{ batch_instance_type }}
+      MinCount: {{ batch_min_count }}
+      MaxCount: {{ batch_max_count }} 
+      DisableSimultaneousMultithreading: true

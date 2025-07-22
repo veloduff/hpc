@@ -1,0 +1,86 @@
+---
+- name: Create AWS ParallelCluster with Lustre
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    cluster_name: "advanced-cluster"
+    headnode_instance_type: "m6idn.2xlarge"
+    batch_instance_type: "m6idn.xlarge"
+    batch_min_count: 8 
+    batch_max_count: 64
+    
+  tasks:
+    - name: Create cluster configuration file from ParallelCluster template (pcluster-adv-template.yaml)
+      template:
+        src: pcluster-adv-template.yaml
+        dest: "./ansible-generated-pcluster-adv-config.yaml"
+
+    - name: Create ParallelCluster cluster
+      shell: |
+        pcluster create-cluster \
+          --cluster-name {{ cluster_name }} \
+          --cluster-configuration ansible-generated-pcluster-adv-config.yaml
+      register: cluster_create
+      
+    - name: Display cluster creation output
+      debug:
+        msg: "{{ cluster_create.stdout }}"
+
+    - name: Wait for cluster to be ready
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }} | jq -r '.clusterStatus'
+      register: cluster_status
+      until: cluster_status.stdout == "CREATE_COMPLETE"
+      retries: 60
+      delay: 60
+      
+    - name: Get cluster info
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }}
+      register: cluster_info
+      
+    - name: Display cluster information
+      debug:
+        msg: "{{ cluster_info.stdout }}"
+
+    - name: Get head node IP
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }} | jq -r '.headNode.publicIpAddress'
+      register: head_node_ip
+      
+    - name: Save head node IP to file
+      copy:
+        content: |
+          Head Node IP: {{ head_node_ip.stdout }}
+          SSH Command: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}
+        dest: "./ansible-generated-pcluster-adv-access.txt"
+        
+    - name: Wait for SSH to be available on head node
+      wait_for:
+        host: "{{ head_node_ip.stdout }}"
+        port: 22
+        delay: 30
+        timeout: 300
+      when: post_script != ""
+        
+    - name: Run post-creation script on head node
+      block:
+        - name: Copy and execute script on head node
+          shell: |
+            script_name=$(basename {{ post_script }})
+            scp -i {{ key_path }} -o StrictHostKeyChecking=no -o ControlMaster=no {{ post_script }} ec2-user@{{ head_node_ip.stdout }}:~/$script_name
+            ssh -i {{ key_path }} -o StrictHostKeyChecking=no -o ControlMaster=no ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$script_name && ~/$script_name"
+          register: script_output
+          
+        - name: Display script output
+          debug:
+            msg: "{{ script_output.stdout }}"
+      when: post_script != ""
+        
+    - name: Display access information
+      debug:
+        msg: |
+          Cluster {{ cluster_name }} is ready!
+          Head Node IP: {{ head_node_ip.stdout }}
+          SSH: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}

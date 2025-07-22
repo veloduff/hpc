@@ -1,0 +1,170 @@
+---
+- name: Create AWS ParallelCluster with Lustre
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ssh_options: "-o StrictHostKeyChecking=no -o ControlMaster=no"
+
+    cluster_setup_script: "../../Cluster_Setup/cluster_setup.sh"
+    install_pkgs_script: "../../Cluster_Setup/install_pkgs.sh"
+    hosts_fix_script: "../../Lustre/fix_lustre_hosts_files.sh"
+    lustre_setup_script: "../../Lustre/setup_lustre.sh"
+    lustre_component_script: "./create_lustre_components.sh"
+    lustre_fs_settings_script: "./lustre_fs_settings.sh"
+    ebs_script: "../../Storage_Management/ebs_create_attach.sh"
+    filesystem_size: "large"  # Default file system size
+    
+  tasks:
+    - name: Validate required variables
+      fail:
+        msg: "Required variable {{ item }} is not defined. Pass with -e {{ item }}=value"
+      when: vars[item] is not defined
+      loop:
+        - cluster_name
+        - region
+        - key_name
+        - headnode_subnet_id
+        - compute_subnet_id
+        - custom_ami
+        - post_script
+        - key_path
+        - os_type
+        - placement_group_name
+        - ansible_python_interpreter
+        - headnode_instance_type
+        - mgs_instance_type
+        - mgs_min_count
+        - mgs_max_count
+        - mds_instance_type
+        - mds_min_count
+        - mds_max_count
+        - oss_instance_type
+        - oss_min_count
+        - oss_max_count
+        - batch_instance_type
+        - batch_min_count
+        - batch_max_count
+        - filesystem_size
+        
+    - name: Create cluster configuration file from ParallelCluster template (pcluster-lustre-template.yaml)
+      template:
+        src: pcluster-lustre-template.yaml
+        dest: "./ansible-generated-pcluster-lustre-template.yaml"
+
+    - name: Create ParallelCluster cluster
+      shell: |
+        pcluster create-cluster \
+          --cluster-name {{ cluster_name }} \
+          --cluster-configuration ansible-generated-pcluster-lustre-template.yaml
+      register: cluster_create
+      
+    - name: Display cluster creation output
+      debug:
+        msg: "{{ cluster_create.stdout }}"
+
+    - name: Wait for cluster to be ready
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }} | jq -r '.clusterStatus'
+      register: cluster_status
+      until: cluster_status.stdout == "CREATE_COMPLETE"
+      retries: 60
+      delay: 60
+      failed_when: cluster_status.stdout in ["CREATE_FAILED", "ROLLBACK_IN_PROGRESS", "ROLLBACK_COMPLETE", "ROLLBACK_FAILED"]
+      
+    - name: Get cluster info
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }}
+      register: cluster_info
+      
+    - name: Display cluster information
+      debug:
+        msg: "{{ cluster_info.stdout }}"
+
+    - name: Get head node IP
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }} | jq -r '.headNode.publicIpAddress'
+      register: head_node_ip
+      
+    - name: Save head node IP to file
+      copy:
+        content: |
+          Head Node IP: {{ head_node_ip.stdout }}
+          SSH Command: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}
+        dest: "./ansible-generated-pcluster-lustre-access.txt"
+        
+    - name: Wait for SSH to be available on head node
+      wait_for:
+        host: "{{ head_node_ip.stdout }}"
+        port: 22
+        delay: 30
+        timeout: 300
+      when: post_script != ""
+        
+    - name: Run post-install script on head node
+      block:
+        - name: Copy all post-install scripts to head node
+          shell: |
+            # Copy main post-install script
+            script_name=$(basename {{ post_script }})
+            scp -i {{ key_path }} {{ ssh_options }} {{ post_script }} ec2-user@{{ head_node_ip.stdout }}:~/$script_name
+            
+            # Copy additional scripts if wrapper is used
+            if [[ "$script_name" == "pcluster-lustre-post-install-wrapper.sh" ]]; then
+              # Copy install_pkgs script (dependency for cluster_setup)
+              install_pkgs_script_name=$(basename {{ install_pkgs_script }})
+              scp -i {{ key_path }} {{ ssh_options }} {{ install_pkgs_script }} ec2-user@{{ head_node_ip.stdout }}:~/$install_pkgs_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$install_pkgs_script_name"
+              
+              # Copy cluster setup script
+              cluster_script_name=$(basename {{ cluster_setup_script }})
+              scp -i {{ key_path }} {{ ssh_options }} {{ cluster_setup_script }} ec2-user@{{ head_node_ip.stdout }}:~/$cluster_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$cluster_script_name"
+              
+              # Copy hosts file fix script for Lustre
+              hosts_fix_script_name=$(basename {{ hosts_fix_script }})
+              scp -i {{ key_path }} {{ ssh_options }} {{ hosts_fix_script }} ec2-user@{{ head_node_ip.stdout }}:~/$hosts_fix_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$hosts_fix_script_name"
+              
+              # Copy EBS create and attach script
+              ebs_script_name=$(basename {{ ebs_script }})
+              scp -i {{ key_path }} {{ ssh_options }} {{ ebs_script }} ec2-user@{{ head_node_ip.stdout }}:~/$ebs_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$ebs_script_name"
+
+              # Copy Lustre component creation script
+              lustre_component_script_name=$(basename {{ lustre_component_script }})
+              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_component_script }} ec2-user@{{ head_node_ip.stdout }}:~/$lustre_component_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_component_script_name"
+              
+              # Copy Lustre filesystem settings script (dependency for create_lustre_components)
+              lustre_fs_settings_script_name=$(basename {{ lustre_fs_settings_script }})
+              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_fs_settings_script }} ec2-user@{{ head_node_ip.stdout }}:~/$lustre_fs_settings_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_fs_settings_script_name"
+              
+              # Copy Lustre setup script
+              lustre_setup_script_name=$(basename {{ lustre_setup_script }})
+              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_setup_script }} ec2-user@{{ head_node_ip.stdout }}:~/$lustre_setup_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_setup_script_name"
+            fi
+            
+        - name: Execute post-install script on head node
+          shell: |
+            script_name=$(basename {{ post_script }})
+            ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$script_name && ~/$script_name {{ filesystem_size }}"
+          register: script_output
+          
+        - name: Display script output
+          debug:
+            msg: "{{ script_output.stdout }}"
+            
+        - name: Copy cluster files to root home directory
+          shell: |
+            ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "sudo cp ~/cluster.* /root/"
+          when: "'pcluster-lustre-post-install-wrapper.sh' in post_script"
+      when: post_script != ""
+        
+    - name: Display access information
+      debug:
+        msg: |
+          Cluster {{ cluster_name }} is ready!
+          Head Node IP: {{ head_node_ip.stdout }}
+          SSH: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}

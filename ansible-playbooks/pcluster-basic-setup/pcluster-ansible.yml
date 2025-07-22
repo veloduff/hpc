@@ -1,0 +1,120 @@
+---
+- name: Create AWS ParallelCluster
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    cluster_name: "my-hpc-cluster"
+    region: "us-west-2"
+    key_name: "my-key-pair"
+    subnet_id: "subnet-xxxxxxxxx"
+    custom_ami: "ami-xxxxxxxxx"  # Optional: custom AMI
+    post_script: ""  # Optional: post-creation script
+    key_path: "~/.ssh/{{ key_name }}.pem"  # SSH key file path
+    os_type: "alinux2"  # Operating system
+    
+  tasks:
+    - name: Create cluster configuration file
+      copy:
+        content: |
+          Region: {{ region }}
+          Image:
+            Os: {{ os_type }}
+          {% if custom_ami != "ami-xxxxxxxxx" %}
+            CustomAmi: {{ custom_ami }}
+          {% endif %}
+          HeadNode:
+            InstanceType: m6idn.2xlarge 
+            Ssh:
+              KeyName: {{ key_name }}
+            Networking:
+              SubnetId: {{ subnet_id }}
+          Scheduling:
+            Scheduler: slurm
+            SlurmQueues:
+            - Name: queue1
+              Networking:
+                SubnetIds:
+                - {{ subnet_id }}
+              ComputeResources:
+              - Name: compute
+                InstanceType: m6idn.xlarge 
+                MinCount: 0
+                MaxCount: 4
+        dest: "./cluster-config.yaml"
+
+    - name: Create ParallelCluster
+      shell: |
+        pcluster create-cluster \
+          --cluster-name {{ cluster_name }} \
+          --cluster-configuration cluster-config.yaml
+      register: cluster_create
+      
+    - name: Display cluster creation output
+      debug:
+        msg: "{{ cluster_create.stdout }}"
+
+    - name: Wait for cluster to be ready
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }} | jq -r '.clusterStatus'
+      register: cluster_status
+      until: cluster_status.stdout == "CREATE_COMPLETE"
+      retries: 30
+      delay: 60
+      
+    - name: Get cluster info
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }}
+      register: cluster_info
+      
+    - name: Display cluster information
+      debug:
+        msg: "{{ cluster_info.stdout }}"
+
+    - name: Get head node IP
+      shell: |
+        pcluster describe-cluster --cluster-name {{ cluster_name }} | jq -r '.headNode.publicIpAddress'
+      register: head_node_ip
+      
+    - name: Save head node IP to file
+      copy:
+        content: |
+          Head Node IP: {{ head_node_ip.stdout }}
+          SSH Command: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}
+        dest: "./cluster-access.txt"
+        
+    - name: Run post-creation script on head node
+      block:
+        - name: Copy script to head node
+          copy:
+            src: "{{ post_script }}"
+            dest: "/tmp/post-creation-script.sh"
+            mode: '0755'
+          delegate_to: "{{ head_node_ip.stdout }}"
+          vars:
+            ansible_ssh_private_key_file: "{{ key_path }}"
+            ansible_user: ec2-user
+            ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ControlMaster=no'
+            ansible_connection: ssh
+            
+        - name: Execute script on head node
+          shell: /tmp/post-creation-script.sh
+          delegate_to: "{{ head_node_ip.stdout }}"
+          vars:
+            ansible_ssh_private_key_file: "{{ key_path }}"
+            ansible_user: ec2-user
+            ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ControlMaster=no'
+            ansible_connection: ssh
+          register: script_output
+          
+        - name: Display script output
+          debug:
+            msg: "{{ script_output.stdout }}"
+      when: post_script != ""
+        
+    - name: Display access information
+      debug:
+        msg: |
+          Cluster {{ cluster_name }} is ready!
+          Head Node IP: {{ head_node_ip.stdout }}
+          SSH: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}

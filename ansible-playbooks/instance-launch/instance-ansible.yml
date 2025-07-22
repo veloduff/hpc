@@ -1,0 +1,110 @@
+---
+- name: Launch AWS EC2 Instance
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    instance_name: "my-instance"
+    region: "us-west-2"
+    key_name: "my-key-pair"
+    subnet_id: "subnet-xxxxxxxxx"
+    custom_ami: "ami-xxxxxxxxx"
+    post_script: ""
+    key_path: "~/.ssh/{{ key_name }}.pem"
+    os_type: "alinux2"
+    security_group: ""
+    
+  tasks:
+    - name: Get AMI ID for OS type
+      shell: |
+        aws ec2 describe-images \
+          --owners amazon \
+          --filters "Name=name,Values=al2023-ami-*" "Name=architecture,Values=x86_64" \
+          --query 'Images | sort_by(@, &CreationDate) | [-1].ImageId' \
+          --output text
+      register: default_ami
+      when: custom_ami == "ami-xxxxxxxxx" and os_type == "alinux2"
+
+    - name: Create security group for SSH access
+      amazon.aws.ec2_security_group:
+        name: "{{ instance_name }}-sg"
+        description: "Security group for {{ instance_name }}"
+        vpc_id: "{{ subnet_vpc_id | default(omit) }}"
+        rules:
+          - proto: tcp
+            ports:
+              - 22
+            cidr_ip: 0.0.0.0/0
+            rule_desc: SSH access
+        tags:
+          Name: "{{ instance_name }}-sg"
+      register: new_security_group
+      when: security_group == ""
+
+    - name: Launch EC2 instance
+      amazon.aws.ec2_instance:
+        name: "{{ instance_name }}"
+        image_id: "{{ custom_ami if custom_ami != 'ami-xxxxxxxxx' else default_ami.stdout }}"
+        instance_type: t3.micro
+        key_name: "{{ key_name }}"
+        subnet_id: "{{ subnet_id }}"
+        security_group: "{{ security_group if security_group != '' else new_security_group.group_id }}"
+        wait: true
+        state: present
+        tags:
+          Name: "{{ instance_name }}"
+      register: instance_result
+
+    - name: Get instance IP
+      set_fact:
+        instance_ip: "{{ instance_result.instances[0].public_ip_address }}"
+
+    - name: Save instance IP to file
+      copy:
+        content: |
+          Instance IP: {{ instance_ip }}
+          SSH Command: ssh -i {{ key_path }} ec2-user@{{ instance_ip }}
+        dest: "./instance-access.txt"
+
+    - name: Wait for SSH to be available
+      wait_for:
+        host: "{{ instance_ip }}"
+        port: 22
+        delay: 30
+        timeout: 300
+
+    - name: Run post-creation script on instance
+      block:
+        - name: Copy script to instance
+          copy:
+            src: "{{ post_script }}"
+            dest: "/tmp/post-creation-script.sh"
+            mode: '0755'
+          delegate_to: "{{ instance_ip }}"
+          vars:
+            ansible_ssh_private_key_file: "{{ key_path }}"
+            ansible_user: ec2-user
+            ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ControlMaster=no'
+            ansible_connection: ssh
+            
+        - name: Execute script on instance
+          shell: /tmp/post-creation-script.sh
+          delegate_to: "{{ instance_ip }}"
+          vars:
+            ansible_ssh_private_key_file: "{{ key_path }}"
+            ansible_user: ec2-user
+            ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o ControlMaster=no'
+            ansible_connection: ssh
+          register: script_output
+          
+        - name: Display script output
+          debug:
+            msg: "{{ script_output.stdout }}"
+      when: post_script != ""
+        
+    - name: Display access information
+      debug:
+        msg: |
+          Instance {{ instance_name }} is ready!
+          Instance IP: {{ instance_ip }}
+          SSH: ssh -i {{ key_path }} ec2-user@{{ instance_ip }}
