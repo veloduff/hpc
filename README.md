@@ -2,7 +2,7 @@
 
 ## Repository Overview
 
-This is a comprehensive High Performance Computing (HPC) infrastructure automation repository designed for AWS cloud deployments. It provides production-ready solutions for parallel computing workloads, advanced parallel filesystems, remote visualization, and performance benchmarking. The repository combines AWS ParallelCluster with enterprise-grade parallel filesystems and automated deployment tools to deliver scalable, high-performance computing environments.
+This is a High Performance Computing (HPC) infrastructure automation repository designed for AWS cloud deployments. It provides production-ready solutions for parallel computing workloads, advanced parallel filesystems, remote visualization, and performance benchmarking. The repository combines AWS ParallelCluster with enterprise-grade parallel filesystems and automated deployment tools to deliver scalable, high-performance computing environments.
 
 ## Key Capabilities
 
@@ -36,19 +36,19 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 - **pdsh/dshbak integration** for parallel command execution
 - **SSH key distribution** and passwordless access setup
 - **Host file management** with short hostname creation
-- **Package management** with robust RPM lock handling
+- **Package management** with RPM lock handling
 
 ## Repository Structure and Key Files
 
 ### Cluster Setup ([`Cluster_Setup/`](Cluster_Setup/))
-- **[`cluster_setup.sh`](Cluster_Setup/cluster_setup.sh)**: Comprehensive cluster initialization and MPI testing
-- **[`install_pkgs.sh`](Cluster_Setup/install_pkgs.sh)**: Robust package management with lock handling
+- **[`cluster_setup.sh`](Cluster_Setup/cluster_setup.sh)**: Cluster initialization and MPI testing
+- **[`install_pkgs.sh`](Cluster_Setup/install_pkgs.sh)**: Package management with lock handling
 - **[`base-cluster.yaml`](Cluster_Setup/base-cluster.yaml)**: Example ParallelCluster configuration
 - **[`README.md`](Cluster_Setup/README.md)**: ParallelCluster installation and setup guide
 
 ### Storage Management ([`Storage_Management/`](Storage_Management/))
 - **[`ebs_create_attach.sh`](Storage_Management/ebs_create_attach.sh)**: Automated EBS volume provisioning and attachment
-- **[`disk_management.md`](Storage_Management/disk_management.md)**: Comprehensive disk and LVM management guide
+- **[`disk_management.md`](Storage_Management/disk_management.md)**: Disk and LVM management guide
 
 ### Lustre Components ([`Lustre/`](Lustre/))
 - **[`setup_lustre.sh`](Lustre/setup_lustre.sh)**: Master Lustre deployment orchestrator
@@ -66,7 +66,7 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 - **[`pcluster-lustre-template.yaml`](ansible-playbooks/pcluster-lustre/pcluster-lustre-template.yaml)**: Ansible template for cluster configuration
 
 ### Benchmarking Suite ([`Benchmarking/`](Benchmarking/))
-- **[`README.md`](Benchmarking/README.md)**: Comprehensive HPC benchmarking guide with IOR and SPECsfs documentation
+- **[`README.md`](Benchmarking/README.md)**: HPC benchmarking guide with IOR and SPECsfs documentation
 - **[`run_ior_benchmark.sh`](Benchmarking/run_ior_benchmark.sh)**: Automated IOR benchmark execution
 - **[`setup_specsfs.sh`](Benchmarking/setup_specsfs.sh)**: SPECsfs benchmark setup automation
 - **[`vdbench.md`](Benchmarking/vdbench.md)**: VDBench performance testing guide
