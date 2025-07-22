@@ -2,7 +2,7 @@
 
 > [!NOTE] 
 > * The Lustre client packages are included with the server packages
-> * ZFS is used as the backing file system, **without** LVM (see the "Using LVM or only ZFS with Lustre" section for more details)
+> * ZFS is used as the backing file system, **without** LVM (see the ["Using LVM or only ZFS with Lustre"](#using-lvm-or-only-zfs-with-lustre) section for more details)
 
 ## Lustre Support matrix
 
@@ -501,5 +501,3 @@ Exaplanation of options used for the `zpool create` command:
    * Lustre will handle the mounting instead
    * It prevents conflicts between ZFS's native mounting and Lustre's mounting mechanisms
 * `-o cachefile=none`: This prevents ZFS from caching the pool configuration, which means the pool won't be automatically imported at boot time
-
-

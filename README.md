@@ -73,13 +73,9 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 
 ### Remote Visualization ([`DCV/`](DCV/))
 - **[`launch_dcv_instance.sh`](DCV/launch_dcv_instance.sh)**: Automated NICE DCV server deployment for remote desktop access
-- **Ubuntu Desktop environment** with full graphics acceleration
-- **Web-based access** via HTTPS for secure remote visualization
-- **Automated session management** and user provisioning
 
 ### GPFS Support ([`GPFS/`](GPFS/))
 - **[`README.md`](GPFS/README.md)**: IBM Spectrum Scale installation and configuration guide
-- **[`archived-gpfs_install.sh`](GPFS/archived-gpfs_install.sh)**: Archived GPFS installation script
 
 ### Scheduler Documentation ([`Schedulers/`](Schedulers/))
 - **[`README.md`](Schedulers/README.md)**: Scheduler documentation and configuration guides
