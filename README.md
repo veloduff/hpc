@@ -85,48 +85,6 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 - **[`ansible-playbooks/pcluster-basic-setup/`](ansible-playbooks/pcluster-basic-setup/)**: Basic ParallelCluster setup
 - **[`ansible-playbooks/pcluster-advanced-setup/`](ansible-playbooks/pcluster-advanced-setup/)**: Advanced ParallelCluster configurations
 
-## Quick Start Guide
-
-### 1. Basic Cluster Setup
-Start with the comprehensive cluster setup guide:
-```bash
-# Follow the ParallelCluster installation guide
-cat Cluster_Setup/README.md
-
-# Deploy a basic cluster
-cd Cluster_Setup/
-./cluster_setup.sh
-```
-
-### 2. Lustre Filesystem Deployment
-For high-performance parallel filesystem:
-```bash
-# Review Lustre setup documentation
-cat Lustre/README.md
-
-# Deploy using Ansible automation
-cd ansible-playbooks/pcluster-lustre/
-./run-pcluster-lustre.sh
-```
-
-### 3. Performance Benchmarking
-Test your deployment:
-```bash
-# Review benchmarking options
-cat Benchmarking/README.md
-
-# Run IOR benchmarks
-cd Benchmarking/
-./run_ior_benchmark.sh
-```
-
-### 4. Remote Visualization Setup
-Deploy NICE DCV for graphics-intensive workloads:
-```bash
-# Review DCV documentation and deploy
-cd DCV/
-./launch_dcv_instance.sh
-```
 
 1. **Prerequisites**: Ensure AWS CLI and ParallelCluster are configured
 2. **Choose your path**: 
@@ -134,4 +92,3 @@ cd DCV/
    - Lustre filesystem: Use [`ansible-playbooks/pcluster-lustre/run-pcluster-lustre.sh`](ansible-playbooks/pcluster-lustre/run-pcluster-lustre.sh)
    - GPFS filesystem: Follow [`GPFS/README.md`](GPFS/README.md)
 3. **Benchmark**: Use tools in [`Benchmarking/`](Benchmarking/) to validate performance
-4. **Monitor**: Leverage built-in monitoring and debugging capabilities
