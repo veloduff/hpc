@@ -38,26 +38,6 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 - **Host file management** with short hostname creation
 - **Package management** with robust RPM lock handling
 
-## Key Technical Features
-
-### Advanced Lustre Implementation
-- **Multi-component architecture**: MGS (Management), MDS (Metadata), OSS (Object Storage)
-- **Scalable design**: Supports hundreds of nodes with configurable component counts
-- **ZFS backend**: Provides data integrity and advanced storage features
-- **Performance tuning**: Directory striping, I/O optimization for EDA workloads
-
-### Robust Automation
-- **Error recovery mechanisms**: Comprehensive validation and retry logic
-- **Parallel execution**: Efficient cluster-wide operations
-- **Modular design**: Independent component lifecycle management
-- **Comprehensive logging**: Detailed debugging and monitoring capabilities
-
-### Performance Benchmarking
-- **IOR integration**: Parallel I/O performance testing
-- **SPECsfs 2014 SP2**: Industry-standard filesystem benchmarking
-- **EDA workload optimization**: Specialized configurations for electronic design workflows
-- **Performance monitoring**: Integration with nmon, htop, and custom tools
-
 ## Repository Structure and Key Files
 
 ### Cluster Setup ([`Cluster_Setup/`](Cluster_Setup/))
@@ -158,55 +138,6 @@ cd DCV/
 ./launch_dcv_instance.sh
 ```
 
-## Deployment Capabilities
-
-### Cluster Size Configurations
-- **Small**: 8 storage + 16 batch nodes (development/testing)
-- **Medium**: 20 storage + 128 batch nodes (production workloads)
-- **Large**: 40 storage + 256 batch nodes (enterprise scale)
-- **XLarge**: 40+ storage + 256+ batch nodes (maximum performance)
-- **Local**: Instance store optimization for ephemeral high-performance storage
-
-### Storage Options
-- **EBS-based**: Persistent, configurable performance (io1, io2, gp3)
-- **Instance Store**: High-performance ephemeral storage with automated cleanup
-- **Hybrid configurations**: Optimized for different workload requirements
-
-### Network Optimization
-- **Placement groups**: Low-latency networking for HPC workloads
-- **Multi-AZ support**: High availability and fault tolerance
-- **Custom AMI support**: Pre-configured images with ZFS and Lustre
-
-## Performance Achievements
-
-### Benchmarking Results
-- **Lustre Performance**: Up to 2.4+ TB/s aggregate throughput in large configurations
-- **EDA Workload Support**: 300+ business metric operations with sub-5ms latency
-- **Scalability**: Successfully tested with 40+ OSS nodes and 80+ OSTs
-- **I/O Optimization**: 7x performance improvement with proper striping (224 MB/s → 1.6 GB/s)
-
-### Production Readiness
-- **Automated deployment**: End-to-end cluster creation in minutes
-- **Comprehensive validation**: MPI testing, filesystem verification, performance benchmarking
-- **Enterprise features**: High availability, monitoring, debugging tools
-- **Documentation**: Extensive guides, troubleshooting, and best practices
-
-## Use Cases and Applications
-
-### Primary Applications
-- **EDA Workloads**: Electronic design automation with high metadata operations
-- **HPC Computing**: Parallel computing with MPI applications
-- **Data Analytics**: Large-scale data processing and analysis
-- **Scientific Computing**: Research workloads requiring high-performance I/O
-
-### Deployment Scenarios
-- **Development environments**: Small-scale testing and development
-- **Production workloads**: Enterprise-scale parallel computing
-- **Burst computing**: On-demand high-performance computing resources
-- **Hybrid cloud**: Integration with existing on-premises infrastructure
-
-## Getting Started
-
 1. **Prerequisites**: Ensure AWS CLI and ParallelCluster are configured
 2. **Choose your path**: 
    - Basic cluster: Start with [`Cluster_Setup/README.md`](Cluster_Setup/README.md)
@@ -214,5 +145,3 @@ cd DCV/
    - GPFS filesystem: Follow [`GPFS/gpfs_spectrum_storage.md`](GPFS/gpfs_spectrum_storage.md)
 3. **Benchmark**: Use tools in [`Benchmarking/`](Benchmarking/) to validate performance
 4. **Monitor**: Leverage built-in monitoring and debugging capabilities
-
-This repository represents a sophisticated, production-ready HPC infrastructure solution that combines AWS cloud services with advanced parallel filesystems, providing automated deployment, comprehensive monitoring, and optimized performance for demanding computational workloads.
