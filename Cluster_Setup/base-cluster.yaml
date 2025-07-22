@@ -1,0 +1,21 @@
+Region: us-west-2
+Image:
+  Os: alinux2
+HeadNode:
+  InstanceType: t3.micro
+  Ssh:
+    KeyName: my-key-name 
+  Networking:
+    SubnetId: subnet-1111111111
+Scheduling:
+  Scheduler: slurm
+  SlurmQueues:
+  - Name: queue1
+    Networking:
+      SubnetIds:
+      - subnet-22222222222222
+    ComputeResources:
+    - Name: compute
+      InstanceType: t3.micro
+      MinCount: 0
+      MaxCount: 4

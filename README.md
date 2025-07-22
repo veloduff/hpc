@@ -43,7 +43,7 @@ This is a comprehensive High Performance Computing (HPC) infrastructure automati
 ### Cluster Setup ([`Cluster_Setup/`](Cluster_Setup/))
 - **[`cluster_setup.sh`](Cluster_Setup/cluster_setup.sh)**: Comprehensive cluster initialization and MPI testing
 - **[`install_pkgs.sh`](Cluster_Setup/install_pkgs.sh)**: Robust package management with lock handling
-- **[`cluster-config.yaml`](Cluster_Setup/cluster-config.yaml)**: Example ParallelCluster configuration
+- **[`base-cluster.yaml`](Cluster_Setup/base-cluster.yaml)**: Example ParallelCluster configuration
 - **[`README.md`](Cluster_Setup/README.md)**: ParallelCluster installation and setup guide
 
 ### Storage Management ([`Storage_Management/`](Storage_Management/))
