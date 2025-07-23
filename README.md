@@ -1,8 +1,8 @@
-# HPC Infrastructure
+# HPC
 
 ## Repository Overview
 
-This is a High Performance Computing (HPC) infrastructure automation repository designed for AWS cloud deployments. It provides production-ready solutions for parallel computing workloads, advanced parallel filesystems, remote visualization, and performance benchmarking. The repository combines AWS ParallelCluster with enterprise-grade parallel filesystems and automated deployment tools to deliver scalable, high-performance computing environments.
+This High Performance Computing (HPC) repository provides solutions for parallel computing workloads, parallel filesystems, remote visualization, and performance benchmarking. The repository also combines AWS ParallelCluster with parallel filesystems with automated deployment tools. 
 
 ## Key Capabilities
 
