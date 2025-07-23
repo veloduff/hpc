@@ -19,18 +19,14 @@ This is a High Performance Computing (HPC) infrastructure automation repository 
 - **Ansible-based orchestration** for consistent, repeatable deployments
 - **Interactive deployment scripts** with parameter validation
 - **Template-driven configuration management** for different cluster sizes
-- **Infrastructure-as-code practices** with version control
 
 ### 2. **Parallel Filesystem Support**
 - **Lustre Filesystem**: Primary focus with ZFS backend, automated MGS/MDS/OSS deployment
 - **IBM Spectrum Scale (GPFS)**: Enterprise-grade parallel filesystem support
-- **Performance optimization** with striping patterns and storage allocation strategies
 
 ### 3. **Storage Management System**
-- **EBS volume automation** with configurable IOPS/throughput (io1, io2, gp3)
-- **Instance Store management** with LVM cleanup and optimization
-- **Mirrored volumes** for high availability (MGT components)
-- **Automated device detection** and attachment
+- **EBS volume create automation** with configurable IOPS/throughput (io1, io2, gp3)
+- **Instance Store management** with LVM cleanup
 
 ### 4. **Cluster Management Tools**
 - **pdsh/dshbak integration** for parallel command execution
@@ -41,23 +37,23 @@ This is a High Performance Computing (HPC) infrastructure automation repository 
 ## Repository Structure and Key Files
 
 ### Cluster Setup ([`Cluster_Setup/`](Cluster_Setup/))
+- **[`README.md`](Cluster_Setup/README.md)**: ParallelCluster installation and setup guide
 - **[`cluster_setup.sh`](Cluster_Setup/cluster_setup.sh)**: Cluster initialization and MPI testing
 - **[`install_pkgs.sh`](Cluster_Setup/install_pkgs.sh)**: Package management with lock handling
 - **[`base-cluster.yaml`](Cluster_Setup/base-cluster.yaml)**: Example ParallelCluster configuration
-- **[`README.md`](Cluster_Setup/README.md)**: ParallelCluster installation and setup guide
 
 ### Storage Management ([`Storage_Management/`](Storage_Management/))
 - **[`ebs_create_attach.sh`](Storage_Management/ebs_create_attach.sh)**: Automated EBS volume provisioning and attachment
 - **[`disk_management.md`](Storage_Management/disk_management.md)**: Disk and LVM management guide
 
 ### Lustre Components ([`Lustre/`](Lustre/))
+- **[`README.md`](Lustre/README.md)**: Complete Lustre setup and configuration guide
 - **[`setup_lustre.sh`](Lustre/setup_lustre.sh)**: Master Lustre deployment orchestrator
 - **[`fix_lustre_hosts_files.sh`](Lustre/fix_lustre_hosts_files.sh)**: Network and hostname management
-- **[`README.md`](Lustre/README.md)**: Complete Lustre setup and configuration guide
 - **[`lustre.md`](Lustre/lustre.md)**: Lustre filesystem documentation
 - **[`customize_pc_ami_lustre.md`](Lustre/customize_pc_ami_lustre.md)**: ParallelCluster AMI customization guide
 
-### Ansible Automation ([`ansible-playbooks/pcluster-lustre/`](ansible-playbooks/pcluster-lustre/))
+### Lustre Ansible Automation ([`ansible-playbooks/pcluster-lustre/`](ansible-playbooks/pcluster-lustre/))
 - **[`run-pcluster-lustre.sh`](ansible-playbooks/pcluster-lustre/run-pcluster-lustre.sh)**: Interactive cluster deployment with size presets
 - **[`pcluster-lustre-playbook.yml`](ansible-playbooks/pcluster-lustre/pcluster-lustre-playbook.yml)**: Main orchestration playbook
 - **[`pcluster-lustre-post-install-wrapper.sh`](ansible-playbooks/pcluster-lustre/pcluster-lustre-post-install-wrapper.sh)**: Post-deployment automation chain
@@ -65,17 +61,17 @@ This is a High Performance Computing (HPC) infrastructure automation repository 
 - **[`lustre_fs_settings.sh`](ansible-playbooks/pcluster-lustre/lustre_fs_settings.sh)**: Lustre filesystem configuration settings
 - **[`pcluster-lustre-template.yaml`](ansible-playbooks/pcluster-lustre/pcluster-lustre-template.yaml)**: Ansible template for cluster configuration
 
+### GPFS Support ([`GPFS/`](GPFS/))
+- **[`README.md`](GPFS/README.md)**: IBM Spectrum Scale installation and configuration guide
+
 ### Benchmarking Suite ([`Benchmarking/`](Benchmarking/))
-- **[`README.md`](Benchmarking/README.md)**: HPC benchmarking guide with IOR and SPECsfs documentation
+- **[`README.md`](Benchmarking/README.md)**: HPC benchmarking guide
 - **[`run_ior_benchmark.sh`](Benchmarking/run_ior_benchmark.sh)**: Automated IOR benchmark execution
 - **[`setup_specsfs.sh`](Benchmarking/setup_specsfs.sh)**: SPECsfs benchmark setup automation
 - **[`vdbench.md`](Benchmarking/vdbench.md)**: VDBench performance testing guide
 
 ### Remote Visualization ([`DCV/`](DCV/))
 - **[`launch_dcv_instance.sh`](DCV/launch_dcv_instance.sh)**: Automated NICE DCV server deployment for remote desktop access
-
-### GPFS Support ([`GPFS/`](GPFS/))
-- **[`README.md`](GPFS/README.md)**: IBM Spectrum Scale installation and configuration guide
 
 ### Scheduler Documentation ([`Schedulers/`](Schedulers/))
 - **[`README.md`](Schedulers/README.md)**: Scheduler documentation and configuration guides

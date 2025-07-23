@@ -93,7 +93,7 @@ set_cluster_config() {
             MDS_MIN_COUNT=2
             MDS_MAX_COUNT=8
             OSS_INSTANCE_TYPE="m6idn.xlarge"
-            OSS_MIN_COUNT=8
+            OSS_MIN_COUNT=4
             OSS_MAX_COUNT=16
             BATCH_INSTANCE_TYPE="m6idn.large"
             BATCH_MIN_COUNT=4
