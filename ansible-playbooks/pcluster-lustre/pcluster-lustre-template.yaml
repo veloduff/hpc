@@ -1,0 +1,108 @@
+Region: {{ region }}
+Image:
+  Os: {{ os_type }}
+  CustomAmi: {{ custom_ami }}
+Monitoring:
+  DetailedMonitoring: true
+HeadNode:
+  InstanceType: {{ headnode_instance_type }}
+  DisableSimultaneousMultithreading: false
+  Ssh:
+    KeyName: {{ key_name }}
+  Networking:
+    ElasticIp: true   # true|false|EIP-id
+    SubnetId: {{ headnode_subnet_id }}
+  LocalStorage:
+    RootVolume:
+      VolumeType: gp3
+      Size: 200
+  Iam:
+    AdditionalIamPolicies:
+      - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - Policy: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      - Policy: arn:aws:iam::aws:policy/AmazonEC2FullAccess 
+AdditionalPackages:
+  IntelSoftware:
+    IntelHpcPlatform: false              # true|false Installs Intel Parallel Studio on the head node 
+Scheduling:
+  Scheduler: slurm
+  SlurmSettings:
+    ScaledownIdletime: 10
+    Dns:
+      DisableManagedDns: true
+  SlurmQueues:
+  - Name: storage-mgs
+    Iam:
+      AdditionalIamPolicies:
+        - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - Policy: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - Policy: arn:aws:iam::aws:policy/AmazonEC2FullAccess 
+    CapacityType: ONDEMAND
+    Networking:
+      SubnetIds: 
+        - {{ compute_subnet_id }}
+      PlacementGroup:
+        Enabled: true
+        Name: {{ placement_group_name }} 
+    ComputeResources:
+    - Name: storage-mgs
+      InstanceType: {{ mgs_instance_type }}
+      MinCount: {{ mgs_min_count }}
+      MaxCount: {{ mgs_max_count }} 
+      DisableSimultaneousMultithreading: false 
+  - Name: storage-mds
+    Iam:
+      AdditionalIamPolicies:
+        - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - Policy: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - Policy: arn:aws:iam::aws:policy/AmazonEC2FullAccess 
+    CapacityType: ONDEMAND
+    Networking:
+      SubnetIds: 
+        - {{ compute_subnet_id }}
+      PlacementGroup:
+        Enabled: true
+        Name: {{ placement_group_name }} 
+    ComputeResources:
+    - Name: storage-mds
+      InstanceType: {{ mds_instance_type }}
+      MinCount: {{ mds_min_count }}
+      MaxCount: {{ mds_max_count }} 
+      DisableSimultaneousMultithreading: false 
+  - Name: storage-oss
+    Iam:
+      AdditionalIamPolicies:
+        - Policy: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - Policy: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - Policy: arn:aws:iam::aws:policy/AmazonEC2FullAccess 
+    CapacityType: ONDEMAND
+    Networking:
+      SubnetIds: 
+        - {{ compute_subnet_id }}
+      PlacementGroup:
+        Enabled: true
+        Name: {{ placement_group_name }} 
+    ComputeResources:
+    - Name: storage-oss
+      InstanceType: {{ oss_instance_type }}
+      MinCount: {{ oss_min_count }}
+      MaxCount: {{ oss_max_count }} 
+      DisableSimultaneousMultithreading: false 
+  - Name: batch01
+    CapacityType: ONDEMAND
+    Networking:
+      SubnetIds: 
+        - {{ compute_subnet_id }}
+      PlacementGroup:
+        Enabled: true
+        Name: {{ placement_group_name }} 
+    ComputeResources:
+    - Name: batch 
+      InstanceType: {{ batch_instance_type }}
+      MinCount: {{ batch_min_count }}
+      MaxCount: {{ batch_max_count }} 
+      DisableSimultaneousMultithreading: true
