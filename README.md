@@ -7,7 +7,7 @@ This High Performance Computing (HPC) repository provides solutions for parallel
 ## Key Capabilities
 
 - **Automated HPC Cluster Deployment** with AWS ParallelCluster
-- **Advanced Parallel Filesystems** (Lustre, GPFS/Spectrum Scale)
+- **Parallel Filesystems** (Lustre, GPFS/Spectrum Scale)
 - **Remote Visualization** with NICE DCV for graphics-intensive workloads
 - **Performance Benchmarking** with industry-standard tools (IOR, SPECsfs)
 - **Storage Management** with intelligent EBS volume provisioning
@@ -22,7 +22,7 @@ This High Performance Computing (HPC) repository provides solutions for parallel
 
 ### 2. **Parallel Filesystem Support**
 - **Lustre Filesystem**: Primary focus with ZFS backend, automated MGS/MDS/OSS deployment
-- **IBM Spectrum Scale (GPFS)**: Enterprise-grade parallel filesystem support
+- **IBM Spectrum Scale (GPFS)**: IBM's parallel filesystem 
 
 ### 3. **Storage Management System**
 - **EBS volume create automation** with configurable IOPS/throughput (io1, io2, gp3)
