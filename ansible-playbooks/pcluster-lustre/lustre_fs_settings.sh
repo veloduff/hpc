@@ -24,7 +24,7 @@ fs_settings() {
     
     case "$fs_type" in
         "small")
-            # High performance: 40K IOPS, 96TB capacity
+            # High performance: 20K IOPS, 4.8TB capacity
             MDT_USE_LOCAL=false
             OST_USE_LOCAL=false
             
@@ -50,7 +50,7 @@ fs_settings() {
             ;;
         
         "medium")
-            # High performance: 40K IOPS, 96TB capacity
+            # High performance: 40K IOPS, 48TB capacity
             MDT_USE_LOCAL=false
             OST_USE_LOCAL=false
             
@@ -76,7 +76,7 @@ fs_settings() {
             ;;
 
         "large")
-            # High performance: 40K IOPS, 96TB capacity
+            # High performance: 80K IOPS, 96TB capacity
             MDT_USE_LOCAL=false
             OST_USE_LOCAL=false
             
@@ -102,7 +102,7 @@ fs_settings() {
             ;;
 
         "xlarge")
-            # High performance: 40K IOPS, 96TB capacity
+            # High performance: 160K IOPS, 96TB capacity
             MDT_USE_LOCAL=false
             OST_USE_LOCAL=false
             
@@ -128,7 +128,7 @@ fs_settings() {
             ;;
             
         "local")
-            # High performance: 40K IOPS, 96TB capacity
+            # High performance: will depend on Instance Store NVMe volumes 
             MDT_USE_LOCAL=true
             OST_USE_LOCAL=true
             
