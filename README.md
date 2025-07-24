@@ -44,7 +44,7 @@ This High Performance Computing (HPC) repository provides solutions for parallel
 
 ### Storage Management ([`Storage_Management/`](Storage_Management/))
 - **[`ebs_create_attach.sh`](Storage_Management/ebs_create_attach.sh)**: Automated EBS volume provisioning and attachment
-- **[`disk_management.md`](Storage_Management/disk_management.md)**: Disk and LVM management guide
+- **[`README.md`](Storage_Management/README.md)**: Disk and LVM management guide
 
 ### Lustre Components ([`Lustre/`](Lustre/))
 - **[`README.md`](Lustre/README.md)**: Complete Lustre setup and configuration guide

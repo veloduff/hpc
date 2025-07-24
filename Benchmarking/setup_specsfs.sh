@@ -62,7 +62,6 @@ LICENSE_KEY="${SPEC_LICENSE_KEY:-$(aws secretsmanager get-secret-value \
 
 SPEC_RUN_DIR="$(dirname "$0")/SPEC_SFS_Run"
 FS_MGR_NODE="mgs01"
-FS_MGR_NODE="mgs01"
 
 # Check for cluster batch file
 if [ ! -f $PDSH_HOST_FILE ]; then
