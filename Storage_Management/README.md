@@ -1,8 +1,7 @@
-# Disk management
+# Storage management
 
-Prior to creating a file system, the disks will need to be available as just 
-devices, without a file system or partition. There are multiple ways to accomplish
-this.
+Prior to creating a file system on top of Instance Store devices, the disks will need to be available as just 
+devices, without a file system or partition. There are multiple ways to accomplish this.
 
 ## LVM vs Partitioning
 
