@@ -43,8 +43,8 @@ This High Performance Computing (HPC) repository provides solutions for parallel
 - **[`base-cluster.yaml`](Cluster_Setup/base-cluster.yaml)**: Example ParallelCluster configuration
 
 ### Storage Management ([`Storage_Management/`](Storage_Management/))
-- **[`ebs_create_attach.sh`](Storage_Management/ebs_create_attach.sh)**: Automated EBS volume provisioning and attachment
 - **[`README.md`](Storage_Management/README.md)**: Disk and LVM management guide
+- **[`ebs_create_attach.sh`](Storage_Management/ebs_create_attach.sh)**: Automated EBS volume provisioning and attachment
 
 ### Lustre Components ([`Lustre/`](Lustre/))
 - **[`README.md`](Lustre/README.md)**: Complete Lustre setup and configuration guide
@@ -54,6 +54,7 @@ This High Performance Computing (HPC) repository provides solutions for parallel
 - **[`customize_pc_ami_lustre.md`](Lustre/customize_pc_ami_lustre.md)**: ParallelCluster AMI customization guide
 
 ### Lustre Ansible Automation ([`ansible-playbooks/pcluster-lustre/`](ansible-playbooks/pcluster-lustre/))
+- **[`README.md`](ansible-playbooks/pcluster-lustre/README.md)**
 - **[`run-pcluster-lustre.sh`](ansible-playbooks/pcluster-lustre/run-pcluster-lustre.sh)**: Interactive cluster deployment with size presets
 - **[`pcluster-lustre-playbook.yml`](ansible-playbooks/pcluster-lustre/pcluster-lustre-playbook.yml)**: Main orchestration playbook
 - **[`pcluster-lustre-post-install-wrapper.sh`](ansible-playbooks/pcluster-lustre/pcluster-lustre-post-install-wrapper.sh)**: Post-deployment automation chain
