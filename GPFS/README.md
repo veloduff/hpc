@@ -16,7 +16,7 @@ This guide assumes that your cluster has the following components properly confi
 
 Before creating a file system, all disks must be available as raw block devices without any existing file systems, partitions, or logical volumes. 
 
-**Reference**: For detailed disk preparation instructions, please refer to the **Disk Management** guide in this repository.
+**Reference**: For detailed disk preparation instructions, please refer to **[Storage Management](../Storage_Management/)** in this repository.
 
 ## IBM Spectrum Scale Installation Process
 
