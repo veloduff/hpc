@@ -51,7 +51,15 @@ SPEC_INSTALL_FILE="SPECsfs2014_SP2.iso"
 # Configuration variables
 INSTALL_PATH="$HOME/SPEC/SPECsfs/execute"
 TEST_DIR="$FS_MOUNT_POINT/specsfs_test.d"
-LICENSE_KEY="XXXX"                             ## License key is a requirement and will file if not provided
+
+## License key is a requirement and specsfs will fail if not provided
+SECRET_NAME="licenses/fs-license" ## Needs to be changed
+LICENSE_KEY="${SPEC_LICENSE_KEY:-$(aws secretsmanager get-secret-value \
+    --secret-id $SECRET_NAME \ 
+    --query SecretString \
+    --output text \
+    | cut -d'"' -f4 )}"
+
 SPEC_RUN_DIR="$(dirname "$0")/SPEC_SFS_Run"
 FS_MGR_NODE="mgs01"
 FS_MGR_NODE="mgs01"

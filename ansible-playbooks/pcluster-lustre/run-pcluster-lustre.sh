@@ -11,6 +11,7 @@ echo "============================================"
 command -v ansible-playbook >/dev/null 2>&1 || { echo "Ansible required. Install: pip install ansible" >&2; exit 1; }
 command -v pcluster >/dev/null 2>&1 || { echo "ParallelCluster CLI required. Install: pip install aws-parallelcluster" >&2; exit 1; }
 command -v aws >/dev/null 2>&1 || { echo "AWS CLI required" >&2; exit 1; }
+command -v jq >/dev/null 2>&1 || { echo "jq required. Install: brew install jq (macOS) or apt-get install jq (Ubuntu) or yum install jq (RHEL/CentOS)" >&2; exit 1; }
 
 echo -n "Verifying AWS credentials..."
 aws sts get-caller-identity >/dev/null 2>&1 || { echo " AWS credentials not configured or expired" >&2; exit 1; }
