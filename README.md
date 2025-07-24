@@ -54,7 +54,7 @@ This High Performance Computing (HPC) repository provides solutions for parallel
 - **[`customize_pc_ami_lustre.md`](Lustre/customize_pc_ami_lustre.md)**: ParallelCluster AMI customization guide
 
 ### Lustre Ansible Automation ([`ansible-playbooks/pcluster-lustre/`](ansible-playbooks/pcluster-lustre/))
-- **[`README.md`](ansible-playbooks/pcluster-lustre/README.md)**
+- **[`README.md`](ansible-playbooks/pcluster-lustre/README.md)**: Ansible automation for deploying a cluster with a Lustre 
 - **[`run-pcluster-lustre.sh`](ansible-playbooks/pcluster-lustre/run-pcluster-lustre.sh)**: Interactive cluster deployment with size presets
 - **[`pcluster-lustre-playbook.yml`](ansible-playbooks/pcluster-lustre/pcluster-lustre-playbook.yml)**: Main orchestration playbook
 - **[`pcluster-lustre-post-install-wrapper.sh`](ansible-playbooks/pcluster-lustre/pcluster-lustre-post-install-wrapper.sh)**: Post-deployment automation chain
