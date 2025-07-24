@@ -24,12 +24,20 @@ reboot
 # Install ZFS
 dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 dnf install -y https://zfsonlinux.org/epel/zfs-release-2-3$(rpm --eval "%{dist}").noarch.rpm
-dnf install -y kernel-devel zfs
+dnf install -y kernel-devel
+dnf install -y zfs
 
 # Verify ZFS is working
 dkms status
 modprobe -v zfs
 zpool version
+
+
+# For lustre version and kernel version:
+
+# Working versions:
+#  lustre-2.15.4 | RHEL 8.10 | kernel 4.18.0-553.54.1.el8_10
+#  lustre-2.15.7 | RHEL 8.10 | kernel 4.18.0-553.63.1.el8_10
 
 # Install Lustre, setup repo
 
