@@ -2,14 +2,14 @@
 
 ## Repository Overview
 
-<table>
+<table style="border: none;">
 <tr>
-<td width="70%" valign="top">
+<td width="70%" valign="top" style="border: none;">
 
 This High Performance Computing (HPC) repository provides solutions for parallel computing workloads, parallel filesystems, remote visualization, and performance benchmarking. The repository also combines AWS ParallelCluster with parallel filesystems with automated deployment tools.
 
 </td>
-<td width="30%">
+<td width="30%" style="border: none;">
 
 <img src="_assets/images/hpc_repo.png" width="300px">
 
