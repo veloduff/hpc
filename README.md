@@ -2,7 +2,7 @@
 
 ## Repository Overview
 
-<img align="right" src="_assets/images/hpc_repo.png" width="200px">
+<img align="right" src="_assets/images/hpc_repo.png" width="180px">
 
 This High Performance Computing (HPC) repository provides solutions for parallel computing workloads, 
 parallel filesystems, remote visualization, and performance benchmarking. 
