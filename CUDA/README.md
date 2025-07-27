@@ -1,8 +1,10 @@
-# CUDA Installation Guide
+# CUDA 
+
+## Toolkit Installation Guide
 
 This guide provides step-by-step instructions for installing NVIDIA CUDA Toolkit on Ubuntu systems.
 
-## Prerequisites
+### Prerequisites
 
 Before installing CUDA, ensure your system meets the following requirements:
 
@@ -25,9 +27,9 @@ Before installing CUDA, ensure your system meets the following requirements:
    g++ --version
    ```
 
-## Installation Steps
+### Installation Steps
 
-### 1. Download CUDA Toolkit
+#### 1. Download CUDA Toolkit
 
 1. Visit the [NVIDIA CUDA Downloads](https://developer.nvidia.com/cuda-downloads) page
 2. Select your system architecture and OS version
@@ -36,7 +38,7 @@ Before installing CUDA, ensure your system meets the following requirements:
    wget https://developer.download.nvidia.com/compute/cuda/[VERSION]/[INSTALLER_NAME]
    ```
 
-### 2. Run the Installer
+#### 2. Run the Installer
 
 Execute the interactive installer:
 ```bash
@@ -85,6 +87,50 @@ To test your installation with sample programs:
    - Compare `nvcc --version` output with sample release date
    - Use samples that match your CUDA toolkit version
 
+## Tiling 
+
+Matrix tiling is a technique that divides large matrices into smaller rectangular blocks (tiles) to optimize memory access patterns and improve performance.
+
+**Key Concepts**
+* Breaks a large matrix into smaller sub-matrices (tiles/blocks)
+* Each tile fits in cache
+* Operations are performed tile-by-tile instead of row-by-row
+* Reduces cache misses from ~64 to ~4 per tile
+
+This approach transforms memory access from jumping across the entire matrix to working on small, cache-friendly blocks.
+
+**Matrix Tiling Visualization**
 
 
+Original Large Matrix (8x8):
+```
+┌─────────────────────────────┐
+│   1  2  3  4  5  6  7  8    │
+│   9 10 11 12 13 14 15 16    │
+│  17 18 19 20 21 22 23 24    │
+│  25 26 27 28 29 30 31 32    │
+│  33 34 35 36 37 38 39 40    │
+│  41 42 43 44 45 46 47 48    │
+│  49 50 51 52 53 54 55 56    │
+│  57 58 59 60 61 62 63 64    │
+└─────────────────────────────┘
+```
+
+Divided into 2x2 tiles, where each 4x4 tile (16 elements) ***fits in L1 cache***
+
+```
+┌──────────────┬──────────────┐
+│  Tile (0,0)  │  Tile (0,1)  │
+│  1  2  3  4  │  5  6  7  8  │
+│  9 10 11 12  │ 13 14 15 16  │
+│ 17 18 19 20  │ 21 22 23 24  │
+│ 25 26 27 28  │ 29 30 31 32  │
+├──────────────┼──────────────┤
+│  Tile (1,0)  │  Tile (1,1)  │
+│ 33 34 35 36  │ 37 38 39 40  │
+│ 41 42 43 44  │ 45 46 47 48  │
+│ 49 50 51 52  │ 53 54 55 56  │
+│ 57 58 59 60  │ 61 62 63 64  │
+└──────────────┴──────────────┘
+```
 
