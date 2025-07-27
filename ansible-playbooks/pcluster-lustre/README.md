@@ -2,6 +2,8 @@
 
 This directory contains Ansible automation for deploying a cluster with a Lustre parallel filesystem, built with AWS ParallelCluster. The automation provides a complete HPC environment with high-performance storage.
 
+**Important**: This is a **step-by-step Lustre deployment process** that builds each Lustre component individually (MGS, MDS, OSS) and creates the filesystem from scratch. This approach **does not use AWS built-in services** like Amazon FSx for Lustre, but instead deploys a native Lustre filesystem directly on EC2 instances with full control over configuration, performance tuning, and customization.
+
 ## Architecture
 
 ### Cluster Components
