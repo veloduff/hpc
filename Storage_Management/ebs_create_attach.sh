@@ -6,34 +6,25 @@
 # This script automates the creation and attachment of Amazon Elastic Block Store (EBS) 
 # volumes to EC2 instances.
 #
-# • Automated EBS volume creation with configurable specifications
-# • Support for all EBS volume types (gp2, gp3, io1, io2, st1, sc1)
-# • Intelligent device name selection and conflict resolution
-# • Automatic EC2 instance metadata detection (IMDSv1/IMDSv2)
-# • Configurable IOPS and throughput settings for performance optimization
-# • Flexible tagging system with automatic default tags
-# • NVMe device detection and mapping for modern instance types
-# • DeleteOnTermination attribute management
-# • Comprehensive timing and progress reporting
+# - Automated EBS volume creation with configurable specifications
+# - Automatically finds next available device name (/dev/sdf through /dev/sdz)
+# - Support for all EBS volume types (gp2, gp3, io1, io2, st1, sc1)
+# - Configurable IOPS and throughput settings
+# - Extensive tagging is used with default tags
+# - NVMe device detection and mapping
+# - DeleteOnTermination management and **enabled by default**, can be false
 #
 # REQUIREMENTS:
 # -------------
-# • AWS CLI configured with appropriate permissions
-# • EC2 permissions: CreateVolume, AttachVolume, DescribeVolumes, CreateTags
-# • Running on an EC2 instance (for automatic metadata detection)
-# • nvme-cli package (automatically installed if missing)
-# • Sufficient EBS volume limits in the target region
-#
-# DEVICE MANAGEMENT:
-# ------------------
-# • Automatically finds next available device name (/dev/sdf through /dev/sdz)
-# • Checks for existing device conflicts before attachment
-# • Maps traditional device names to NVMe devices on modern instances
-# • Adds Device_Name tag to volumes for easy identification
+# - AWS CLI configured with appropriate permissions
+# - EC2 permissions: CreateVolume, AttachVolume, DescribeVolumes, CreateTags
+# - Running on an EC2 instance (for automatic metadata detection)
+# - nvme-cli package (automatically installed if missing)
+# - Sufficient EBS volume limits in the target region
 #
 # USAGE EXAMPLES:
 # ---------------
-# Basic usage (creates 8GB gp3 volume):
+# Usage with default options: 8GB gp3 volume, with 3000 IPOS, DeleteOnTermination="true"):
 #   ./ebs_create_attach.sh
 #
 # Create high-performance volume:
@@ -63,7 +54,6 @@
 # --help                       Display usage information
 #
 # DeleteOnTermination is enabled by default to prevent orphaned volumes
-#
 #
 set -e
 
