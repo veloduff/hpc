@@ -9,8 +9,6 @@ parallel filesystems, remote visualization, and performance benchmarking.
 
 The repository also combines AWS ParallelCluster with parallel filesystems with automated deployment tools.
 
-<br><br>
-
 ## Key Capabilities
 
 - **Automated HPC Cluster Deployment** with AWS ParallelCluster
