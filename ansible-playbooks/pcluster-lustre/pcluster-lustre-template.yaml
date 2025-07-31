@@ -6,6 +6,8 @@ Monitoring:
   DetailedMonitoring: true
 HeadNode:
   InstanceType: {{ headnode_instance_type }}
+  # Note: Head node typically should remain ONDEMAND for cluster stability
+  CapacityType: ONDEMAND
   DisableSimultaneousMultithreading: false
   Ssh:
     KeyName: {{ key_name }}
@@ -39,7 +41,7 @@ Scheduling:
         - Policy: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
         - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - Policy: arn:aws:iam::aws:policy/AmazonEC2FullAccess 
-    CapacityType: ONDEMAND
+    CapacityType: {{ capacity_type | upper }}
     Networking:
       SubnetIds: 
         - {{ compute_subnet_id }}
@@ -59,7 +61,7 @@ Scheduling:
         - Policy: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
         - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - Policy: arn:aws:iam::aws:policy/AmazonEC2FullAccess 
-    CapacityType: ONDEMAND
+    CapacityType: {{ capacity_type | upper }}
     Networking:
       SubnetIds: 
         - {{ compute_subnet_id }}
@@ -79,7 +81,7 @@ Scheduling:
         - Policy: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
         - Policy: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - Policy: arn:aws:iam::aws:policy/AmazonEC2FullAccess 
-    CapacityType: ONDEMAND
+    CapacityType: {{ capacity_type | upper }}
     Networking:
       SubnetIds: 
         - {{ compute_subnet_id }}
@@ -93,7 +95,7 @@ Scheduling:
       MaxCount: {{ oss_max_count }} 
       DisableSimultaneousMultithreading: false 
   - Name: batch01
-    CapacityType: ONDEMAND
+    CapacityType: {{ capacity_type | upper }}
     Networking:
       SubnetIds: 
         - {{ compute_subnet_id }}

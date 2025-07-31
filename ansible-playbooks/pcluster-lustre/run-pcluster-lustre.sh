@@ -61,6 +61,15 @@ PLACEMENT_GROUP_NAME=${PLACEMENT_GROUP_NAME:-${def_placement_group_name}}
 read -p "File system size (small/medium/large/xlarge/local) [${def_file_system_size}]: " FILE_SYSTEM_SIZE
 FILE_SYSTEM_SIZE=${FILE_SYSTEM_SIZE:-${def_file_system_size}}
 
+read -p "Capacity type (ondemand/spot) [ondemand]: " CAPACITY_TYPE
+CAPACITY_TYPE=${CAPACITY_TYPE:-ondemand}
+
+# Validate capacity type
+if [[ "$CAPACITY_TYPE" != "ondemand" && "$CAPACITY_TYPE" != "spot" ]]; then
+    echo "Error: Capacity type must be 'ondemand' or 'spot'"
+    exit 1
+fi
+
 # Set post-creation script to use wrapper
 POST_SCRIPT="./pcluster-lustre-post-install-wrapper.sh"
 
@@ -97,7 +106,7 @@ set_cluster_config() {
             OSS_MIN_COUNT=4
             OSS_MAX_COUNT=16
             BATCH_INSTANCE_TYPE="m6idn.large"
-            BATCH_MIN_COUNT=4
+            BATCH_MIN_COUNT=2
             BATCH_MAX_COUNT=32
             ;;
         "medium")
@@ -199,6 +208,7 @@ ansible-playbook -i pcluster-lustre-inventory.ini pcluster-lustre-playbook.yml \
     -e "batch_min_count=$BATCH_MIN_COUNT" \
     -e "batch_max_count=$BATCH_MAX_COUNT" \
     -e "filesystem_size=$FILE_SYSTEM_SIZE" \
+    -e "capacity_type=$CAPACITY_TYPE" \
     -e "ansible_python_interpreter=python3" \
     -v
 

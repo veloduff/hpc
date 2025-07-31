@@ -45,6 +45,7 @@
         - batch_min_count
         - batch_max_count
         - filesystem_size
+        - capacity_type
         
     - name: Create cluster configuration file from ParallelCluster template (pcluster-lustre-template.yaml)
       template:
