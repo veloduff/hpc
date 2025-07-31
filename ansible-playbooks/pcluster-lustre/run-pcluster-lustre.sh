@@ -26,6 +26,9 @@ DATE=$(date +%b%d-%Y%H%M)
 # def_os_type=""
 # def_placement_group_name=""
 
+# Get default values from config file
+source ../../_config/pcluster-lustre.cfg || true
+
 def_file_system_size="small"
 
 # Get user input

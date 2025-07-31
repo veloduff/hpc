@@ -52,13 +52,22 @@ SPEC_INSTALL_FILE="SPECsfs2014_SP2.iso"
 INSTALL_PATH="$HOME/SPEC/SPECsfs/execute"
 TEST_DIR="$FS_MOUNT_POINT/specsfs_test.d"
 
+source ../_config/specsfs.cfg || true   ## get additional config info
+SECRET_NAME=${SECRET_NAME:-"licenses/fs-license"}
+
 ## License key is a requirement and specsfs will fail if not provided
-SECRET_NAME="licenses/fs-license" ## Needs to be changed
+# Set license key 
+# SPEC_LICENSE_KEY=XXXX
 LICENSE_KEY="${SPEC_LICENSE_KEY:-$(aws secretsmanager get-secret-value \
     --secret-id $SECRET_NAME \ 
     --query SecretString \
     --output text \
     | cut -d'"' -f4 )}"
+
+if [ -z "$LICENSE_KEY" ]; then
+    echo "Error: License key not found in environment variable SPEC_LICENSE_KEY or AWS Secrets Manager"
+    exit 1
+fi
 
 SPEC_RUN_DIR="$(dirname "$0")/SPEC_SFS_Run"
 FS_MGR_NODE="mgs01"
