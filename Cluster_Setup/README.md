@@ -131,7 +131,7 @@ HeadNode:
     ElasticIp: true   # true|false|EIP-id
     SubnetId: subnet-XXXXXXXXXXXXXXXXX   # VPC: vpc-XXXXXXXXXXXXXXXXX (ParallelClusterVPC-XXXXXXXXXXXXXX)
     AdditionalSecurityGroups:
-      - sg-XXXXXXXXXXXXXXXXX             # SG Name: corp-prefix-all-regions
+      - sg-XXXXXXXXXXXXXXXXX             
 AdditionalPackages:
   IntelSoftware:
     IntelHpcPlatform: false              # true|false Installs Intel Parallel Studio on the head node
