@@ -1,5 +1,6 @@
 # NFS, SMB, CIFS and other file system protocols
 
+This readme covers of NFS, SMB, and CIFS, with some mention others. 
 
 **Overview**
 * **NFS (Network File System)** is primarily used in Unix/Linux environments, offering stateless (NFSv3) or stateful (NFSv4) operations. 
@@ -17,9 +18,9 @@
 <table>
   <thead>
     <tr>
-      <th>Feature</th>
-      <th>NFS</th>
-      <th>SMB</th>
+      <th width="20%">&nbsp;</th>
+      <th width="25%">NFS</th>
+      <th width="55%">SMB</th>
     </tr>
   </thead>
   <tbody>
@@ -29,7 +30,7 @@
       <td>Windows-based architectures</td>
     </tr>
     <tr>
-      <td><strong>Shared resources</strong></td>
+      <td><strong>What resources can be shared</strong></td>
       <td>Files and directories</td>
       <td>Wide range of network resources, including file and print services, storage devices, and virtual machine storage</td>
     </tr>
@@ -47,14 +48,14 @@ for every application.
 <table>
   <thead>
     <tr>
-      <th style="width: 20%">Feature</th>
-      <th style="width: 40%">NFSv3</th>
-      <th style="width: 40%">NFSv4</th>
+      <th width="20%">Feature</th>
+      <th width="40%">NFSv3</th>
+      <th width="40%">NFSv4</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><strong>Latency, and State Management</strong></td>
+      <td><strong>Latency, State Management</strong></td>
       <td>Lower latency, Stateless</td>
       <td>Stateful</td>
     </tr>
@@ -65,12 +66,12 @@ for every application.
     </tr>
     <tr>
       <td><strong>Locking</strong></td>
-      <td>Locking is not built-in which is better for stateless<br> operations, but can use external (NLM)</td>
+      <td>Locking is not built-in, better for stateless operations, but can use external (NLM)</td>
       <td>Built-in locking</td>
     </tr>
     <tr>
       <td><strong>Metadata and small files</strong></td>
-      <td>Good for high metadata and many small files,<br> e.g., Faster with <code>ls, stat, find</code></td>
+      <td>Good for high metadata and many small files, e.g., Faster with <code>ls, stat, find</code></td>
       <td>Better for throughput and large file performance</td> 
     </tr>
     <tr>
@@ -80,7 +81,7 @@ for every application.
     </tr>
     <tr>
       <td><strong>Security</strong></td>
-      <td>Not built-in (optional AUTH_SYS, Kerberos),<br> Multiple ports complicate firewall config</td>
+      <td>Not built-in (optional AUTH_SYS, Kerberos), multi-port firewall config</td>
       <td>Built-in Kerberos, integration with Active Directory, and rich ACL support</td>
     </tr>
     <tr>
@@ -91,7 +92,7 @@ for every application.
     <tr>
       <td><strong>Operations</strong></td>
       <td>Simple RPC calls</td>
-      <td>Compound operations, reduced network round trips, delegations improve caching (see below)</td>
+      <td>Compound operations, reduced round trips, delegations* improve caching</td>
     </tr>
     <tr>
       <td><strong>Caching</strong></td>
@@ -101,12 +102,12 @@ for every application.
     <tr>
       <td><strong>Parallel Access</strong></td>
       <td>Not available or very limited</td>
-      <td>pNFS parallel access, for high-throughput,<br> better scalability with multiple clients</td>
+      <td>pNFS parallel access, for high-throughput, better scalability with multiple clients</td>
     </tr>
   </tbody>
 </table>
 
-### NFSv4 Delegations Explained
+### *NFSv4 Delegations Explained
 
 **Delegations** are NFSv4's mechanism for improving caching performance by granting clients temporary authority to manage files locally:
 
@@ -137,11 +138,11 @@ for every application.
 |---------------------------------|-----------------------------|--------------------------------|-----------------------------------------------|
 | **Number of AZs**               | Single or Multiple          | Single or Multiple             | **Single AZ only**                            | 
 | **Deployment type**             | SINGLE_AZ_1<br> MULTI_AZ_1  | SINGLE_AZ_2<br>MULTI_AZ_2      | SINGLE_AZ_2   ("_2" is for the generation)    |
-| **HA pairs**                    | 1 HA pair                   | 1 HA pair                      | 1 – 12 HA pairs                               |
+| **HA pairs**                    | **1 HA pair**               | **1 HA pair**                  | **1 – 12 HA pairs**                           |
 | **SSD storage**                 | 1 TiB up to 192 TiB         | 1 TiB up to 512 TiB            | 1 TiB up to 1 PiB (total)                     |
 | **SSD IOPS**                    | 3 IOPS/GiB up to 200K       | 3 IOPS/GiB up to 200K          | 3 IOPS/GiB up to 2,400,000 (200K per HA pair) |
 | **Throughput for one HA pair**  | 128 MB/s up to 4,096 MB/s   | 384 MB/s up to 6,144 MB/s      | 384 MB/s up to 6,144 MB/s (per HA pair)       |
-| **Throughput total**            | Same as one HA pair         | Same as one HA pair            | 384 MB/s up to 73,728 MB/s (with 12 HA pairs) |
+| **Throughput total**            | Same as one gen 1 HA pair   | Same as one gen 2 HA pair      | 384 MB/s up to 73,728 MB/s (with 12 HA pairs) |
 
 **NOTE**:
 * Second-generation FSx for ONTAP file systems are available in the following AWS Regions: **US East (N. Virginia, Ohio), US West (N. California, Oregon), Europe (Frankfurt, Ireland), and Asia-Pacific (Sydney).**
