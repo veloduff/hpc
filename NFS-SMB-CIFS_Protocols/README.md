@@ -47,9 +47,9 @@ for every application.
 <table>
   <thead>
     <tr>
-      <th>Feature</th>
-      <th>NFSv3</th>
-      <th>NFSv4</th>
+      <th style="width: 20%">Feature</th>
+      <th style="width: 40%">NFSv3</th>
+      <th style="width: 40%">NFSv4</th>
     </tr>
   </thead>
   <tbody>
