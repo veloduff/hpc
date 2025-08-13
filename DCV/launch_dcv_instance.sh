@@ -94,7 +94,7 @@
 set -e
 
 # read variables from custom config
-source ../_config/dcv.cfg || true
+source ../_config/dcv.cfg 2>/dev/null || true
 ## Example dcv.cfg file:
 #  DEF_REGION="us-west-2"
 #  DEF_KEY_NAME="my-key"
