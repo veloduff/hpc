@@ -571,3 +571,7 @@ demo_wafer_model.pth
 # personal configs (not using .env for this)
 private_config/*
 _config/*
+
+# ansible gernerated files
+ansible-gen*
+
