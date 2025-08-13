@@ -67,15 +67,37 @@ CLEANUP_INSTANCE_STORE=true           # Set to false to skip Instance Store clea
 INSTALL_SCRIPT="$HOME/install_pkgs.sh"
 PDSH_WCOLL_FILE="$HOME/cluster-ip-addr"
 
-# Required packages to be installed or verified that they are installed
+# Required packages to be installed or verify they are installed
 PACKAGE_CHECK=true                    # Set to true to check and install packages
 REQUIRED_PKGS="pdsh pdsh-rcmd-ssh nvme-cli screen pcp-system-tools htop strace perf psmisc tree git wget nethogs stress iperf3 nmon"
 
 # Use dnf without subscription manager (for RHEL systems)
 DNF="dnf --disableplugin=subscription-manager -q"
 
-echo "===== Starting Cluster Setup and Testing ====="
-
+# Function to install AWS CLI v2
+install_aws_cli() {
+    if ! aws --version 2>/dev/null | grep -q "aws-cli/2"; then
+        OS=$(uname -s)
+        case "$OS" in
+            Linux*)
+                curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+                unzip awscliv2.zip
+                sudo ./aws/install
+                ;;
+            Darwin*)
+                curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+                sudo installer -pkg AWSCLIV2.pkg -target /
+                ;;
+            *)
+                echo "Unsupported OS: $OS"
+                exit 1
+                ;;
+        esac
+        echo "AWS CLI v2 installed successfully"
+    else
+        echo "AWS CLI v2 already installed"
+    fi
+}
 
 # Function to cleanup Instance Store devices
 cleanup_instance_store() {
@@ -129,10 +151,15 @@ cleanup_instance_store() {
   echo "Instance Store cleanup complete"
 }
 
+echo "===== Starting Cluster Setup and Testing ====="
+
 # Wait for system to fully initialize
 wait_time=30
 echo "===== Waiting $wait_time seconds for system initialization ====="
-sleep $wait_time 
+sleep $wait_time
+
+# Install AWS CLI v2 if needed
+install_aws_cli 
 
 # Install packages on head node
 if [[ "$PACKAGE_CHECK" == "true" ]]; then
