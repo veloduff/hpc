@@ -6,7 +6,6 @@ Monitoring:
   DetailedMonitoring: true
 HeadNode:
   InstanceType: {{ headnode_instance_type }}
-  # Note: Head node typically should remain ONDEMAND for cluster stability
   CapacityType: ONDEMAND
   DisableSimultaneousMultithreading: false
   Ssh:

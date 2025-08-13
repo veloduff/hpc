@@ -17,17 +17,10 @@ echo -n "Verifying AWS credentials..."
 aws sts get-caller-identity >/dev/null 2>&1 || { echo " AWS credentials not configured or expired" >&2; exit 1; }
 echo " verified"
 
-DATE=$(date +%b%d-%Y%H%M)
-# def_region=""
-# def_key_path=""
-# def_headnode_subnet_id=""
-# def_compute_subnet_id=""
-# def_custom_ami=""
-# def_os_type=""
-# def_placement_group_name=""
+DATE=$(date +%Y%m%d%H%M%S)
 
 # Get default values from config file
-source ../../_config/pcluster-lustre.cfg || true
+source ../../_config/pcluster-lustre.cfg 2>/dev/null || true
 
 def_file_system_size="small"
 
@@ -72,6 +65,22 @@ if [[ "$CAPACITY_TYPE" != "ondemand" && "$CAPACITY_TYPE" != "spot" ]]; then
     echo "Error: Capacity type must be 'ondemand' or 'spot'"
     exit 1
 fi
+
+# Set SSH user based on OS type
+case "$OS_TYPE" in
+    "rocky9"|"rocky8")
+        SSH_USER="rocky"
+        ;;
+    "rhel8"|"rhel9")
+        SSH_USER="ec2-user"
+        ;;
+    "ubuntu"*)
+        SSH_USER="ubuntu"
+        ;;
+    *)
+        SSH_USER="ec2-user"
+        ;;
+esac
 
 # Set post-creation script to use wrapper
 POST_SCRIPT="./pcluster-lustre-post-install-wrapper.sh"
@@ -212,6 +221,7 @@ ansible-playbook -i pcluster-lustre-inventory.ini pcluster-lustre-playbook.yml \
     -e "batch_max_count=$BATCH_MAX_COUNT" \
     -e "filesystem_size=$FILE_SYSTEM_SIZE" \
     -e "capacity_type=$CAPACITY_TYPE" \
+    -e "ssh_user=$SSH_USER" \
     -e "ansible_python_interpreter=python3" \
     -v
 
