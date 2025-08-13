@@ -46,6 +46,7 @@
         - batch_max_count
         - filesystem_size
         - capacity_type
+        - ssh_user
         
     - name: Create cluster configuration file from ParallelCluster template (pcluster-lustre-template.yaml)
       template:
@@ -90,7 +91,7 @@
       copy:
         content: |
           Head Node IP: {{ head_node_ip.stdout }}
-          SSH Command: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}
+          SSH Command: ssh -i {{ key_path }} {{ ssh_user }}@{{ head_node_ip.stdout }}
         dest: "./ansible-generated-pcluster-lustre-access.txt"
         
     - name: Wait for SSH to be available on head node
@@ -107,50 +108,50 @@
           shell: |
             # Copy main post-install script
             script_name=$(basename {{ post_script }})
-            scp -i {{ key_path }} {{ ssh_options }} {{ post_script }} ec2-user@{{ head_node_ip.stdout }}:~/$script_name
+            scp -i {{ key_path }} {{ ssh_options }} {{ post_script }} {{ ssh_user }}@{{ head_node_ip.stdout }}:~/$script_name
             
             # Copy additional scripts if wrapper is used
             if [[ "$script_name" == "pcluster-lustre-post-install-wrapper.sh" ]]; then
               # Copy install_pkgs script (dependency for cluster_setup)
               install_pkgs_script_name=$(basename {{ install_pkgs_script }})
-              scp -i {{ key_path }} {{ ssh_options }} {{ install_pkgs_script }} ec2-user@{{ head_node_ip.stdout }}:~/$install_pkgs_script_name
-              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$install_pkgs_script_name"
+              scp -i {{ key_path }} {{ ssh_options }} {{ install_pkgs_script }} {{ ssh_user }}@{{ head_node_ip.stdout }}:~/$install_pkgs_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "chmod +x ~/$install_pkgs_script_name"
               
               # Copy cluster setup script
               cluster_script_name=$(basename {{ cluster_setup_script }})
-              scp -i {{ key_path }} {{ ssh_options }} {{ cluster_setup_script }} ec2-user@{{ head_node_ip.stdout }}:~/$cluster_script_name
-              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$cluster_script_name"
+              scp -i {{ key_path }} {{ ssh_options }} {{ cluster_setup_script }} {{ ssh_user }}@{{ head_node_ip.stdout }}:~/$cluster_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "chmod +x ~/$cluster_script_name"
               
               # Copy hosts file fix script for Lustre
               hosts_fix_script_name=$(basename {{ hosts_fix_script }})
-              scp -i {{ key_path }} {{ ssh_options }} {{ hosts_fix_script }} ec2-user@{{ head_node_ip.stdout }}:~/$hosts_fix_script_name
-              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$hosts_fix_script_name"
+              scp -i {{ key_path }} {{ ssh_options }} {{ hosts_fix_script }} {{ ssh_user }}@{{ head_node_ip.stdout }}:~/$hosts_fix_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "chmod +x ~/$hosts_fix_script_name"
               
               # Copy EBS create and attach script
               ebs_script_name=$(basename {{ ebs_script }})
-              scp -i {{ key_path }} {{ ssh_options }} {{ ebs_script }} ec2-user@{{ head_node_ip.stdout }}:~/$ebs_script_name
-              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$ebs_script_name"
+              scp -i {{ key_path }} {{ ssh_options }} {{ ebs_script }} {{ ssh_user }}@{{ head_node_ip.stdout }}:~/$ebs_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "chmod +x ~/$ebs_script_name"
 
               # Copy Lustre component creation script
               lustre_component_script_name=$(basename {{ lustre_component_script }})
-              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_component_script }} ec2-user@{{ head_node_ip.stdout }}:~/$lustre_component_script_name
-              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_component_script_name"
+              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_component_script }} {{ ssh_user }}@{{ head_node_ip.stdout }}:~/$lustre_component_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_component_script_name"
               
               # Copy Lustre filesystem settings script (dependency for create_lustre_components)
               lustre_fs_settings_script_name=$(basename {{ lustre_fs_settings_script }})
-              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_fs_settings_script }} ec2-user@{{ head_node_ip.stdout }}:~/$lustre_fs_settings_script_name
-              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_fs_settings_script_name"
+              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_fs_settings_script }} {{ ssh_user }}@{{ head_node_ip.stdout }}:~/$lustre_fs_settings_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_fs_settings_script_name"
               
               # Copy Lustre setup script
               lustre_setup_script_name=$(basename {{ lustre_setup_script }})
-              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_setup_script }} ec2-user@{{ head_node_ip.stdout }}:~/$lustre_setup_script_name
-              ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_setup_script_name"
+              scp -i {{ key_path }} {{ ssh_options }} {{ lustre_setup_script }} {{ ssh_user }}@{{ head_node_ip.stdout }}:~/$lustre_setup_script_name
+              ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "chmod +x ~/$lustre_setup_script_name"
             fi
             
         - name: Execute post-install script on head node
           shell: |
             script_name=$(basename {{ post_script }})
-            ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$script_name && ~/$script_name {{ filesystem_size }}"
+            ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "chmod +x ~/$script_name && ~/$script_name {{ filesystem_size }}"
           register: script_output
           
         - name: Display script output
@@ -159,7 +160,7 @@
             
         - name: Copy cluster files to root home directory
           shell: |
-            ssh -i {{ key_path }} {{ ssh_options }} ec2-user@{{ head_node_ip.stdout }} "sudo cp ~/cluster.* /root/"
+            ssh -i {{ key_path }} {{ ssh_options }} {{ ssh_user }}@{{ head_node_ip.stdout }} "sudo cp ~/cluster.* /root/"
           when: "'pcluster-lustre-post-install-wrapper.sh' in post_script"
       when: post_script != ""
         
@@ -168,4 +169,4 @@
         msg: |
           Cluster {{ cluster_name }} is ready!
           Head Node IP: {{ head_node_ip.stdout }}
-          SSH: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}
+          SSH: ssh -i {{ key_path }} {{ ssh_user }}@{{ head_node_ip.stdout }}
