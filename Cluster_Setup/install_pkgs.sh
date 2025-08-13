@@ -46,7 +46,7 @@ chk_clean_rpm_processes() {
 
 # Check which packages are missing
 check_missing_packages() {
-    local packages="$*"
+    packages="$*"
     local installed_output
     local missing_packages=""
     
@@ -95,17 +95,20 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+# Set global packages variable
+packages="$*"
+
 # Check which packages are missing
-missing_packages=$(check_missing_packages "$@")
+missing_packages=$(check_missing_packages "$packages")
 
 if [ -z "$missing_packages" ]; then
-    echo "ALL_INSTALLED"
+    echo "ALL_INSTALLED: $packages"
     exit 0
 fi
 
 # Try to install missing packages
 if install_packages "$missing_packages"; then
-    echo "SUCCESS"
+    echo "SUCCESS: $missing_packages"
 else
     echo "ERROR"
     exit 1
