@@ -5,12 +5,19 @@
   vars:
     ansible_python_interpreter: "{{ ansible_playbook_python }}"
     cluster_name: "advanced-cluster"
-    headnode_instance_type: "m6idn.2xlarge"
-    batch_instance_type: "m6idn.xlarge"
-    batch_min_count: 8 
-    batch_max_count: 64
     
   tasks:
+    - name: Check required variables
+      fail:
+        msg: "Required variable {{ item }} is not defined"
+      when: vars[item] is not defined or vars[item] == ''
+      loop:
+        - headnode_instance_type
+        - batch_instance_type
+        - batch_min_count
+        - batch_max_count
+        - ssh_user
+        - placement_group_name
     - name: Create cluster configuration file from ParallelCluster template (pcluster-adv-template.yaml)
       template:
         src: pcluster-adv-template.yaml
@@ -53,7 +60,7 @@
       copy:
         content: |
           Head Node IP: {{ head_node_ip.stdout }}
-          SSH Command: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}
+          SSH Command: ssh -i {{ key_path }} {{ ssh_user }}@{{ head_node_ip.stdout }}
         dest: "./ansible-generated-pcluster-adv-access.txt"
         
     - name: Wait for SSH to be available on head node
@@ -62,25 +69,28 @@
         port: 22
         delay: 30
         timeout: 300
-      when: post_script != ""
         
-    - name: Run post-creation script on head node
-      block:
-        - name: Copy and execute script on head node
-          shell: |
-            script_name=$(basename {{ post_script }})
-            scp -i {{ key_path }} -o StrictHostKeyChecking=no -o ControlMaster=no {{ post_script }} ec2-user@{{ head_node_ip.stdout }}:~/$script_name
-            ssh -i {{ key_path }} -o StrictHostKeyChecking=no -o ControlMaster=no ec2-user@{{ head_node_ip.stdout }} "chmod +x ~/$script_name && ~/$script_name"
-          register: script_output
-          
-        - name: Display script output
-          debug:
-            msg: "{{ script_output.stdout }}"
-      when: post_script != ""
+    - name: Copy required scripts to head node
+      shell: |
+        scp -i {{ key_path }} -o StrictHostKeyChecking=no -o ControlMaster=no ../../Cluster_Setup/cluster_setup.sh {{ ssh_user }}@{{ head_node_ip.stdout }}:~/
+        scp -i {{ key_path }} -o StrictHostKeyChecking=no -o ControlMaster=no ../../Cluster_Setup/install_pkgs.sh {{ ssh_user }}@{{ head_node_ip.stdout }}:~/
+        scp -i {{ key_path }} -o StrictHostKeyChecking=no -o ControlMaster=no ./pcluster-adv-post-install-wrapper.sh {{ ssh_user }}@{{ head_node_ip.stdout }}:~/
+      register: copy_scripts
+      
+    - name: Run post-install wrapper on head node
+      shell: |
+        ssh -i {{ key_path }} -o StrictHostKeyChecking=no -o ControlMaster=no {{ ssh_user }}@{{ head_node_ip.stdout }} \
+          "chmod +x ~/pcluster-adv-post-install-wrapper.sh ~/cluster_setup.sh ~/install_pkgs.sh && \
+           ~/pcluster-adv-post-install-wrapper.sh"
+      register: post_install_output
+      
+    - name: Display post-install output
+      debug:
+        msg: "{{ post_install_output.stdout }}"
         
     - name: Display access information
       debug:
         msg: |
           Cluster {{ cluster_name }} is ready!
           Head Node IP: {{ head_node_ip.stdout }}
-          SSH: ssh -i {{ key_path }} ec2-user@{{ head_node_ip.stdout }}
+          SSH: ssh -i {{ key_path }} {{ ssh_user }}@{{ head_node_ip.stdout }}

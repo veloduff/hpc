@@ -12,8 +12,6 @@ HeadNode:
   Networking:
     ElasticIp: true   # true|false|EIP-id
     SubnetId: {{ headnode_subnet_id }}
-    AdditionalSecurityGroups:
-      - sg-02b7b66da8adb15cc             # SG Name: corp-prefix-all-regions
   LocalStorage:
     RootVolume:
       VolumeType: gp3
@@ -41,7 +39,7 @@ Scheduling:
         - {{ compute_subnet_id }}
       PlacementGroup:
         Enabled: true
-        Name: cluster-01-placement-group-01 
+        Name: {{ placement_group_name }} 
     ComputeResources:
     - Name: batch 
       InstanceType: {{ batch_instance_type }}

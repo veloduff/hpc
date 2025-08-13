@@ -11,18 +11,22 @@ echo "=============================================="
 command -v ansible-playbook >/dev/null 2>&1 || { echo "Ansible required. Install: pip install ansible" >&2; exit 1; }
 command -v pcluster >/dev/null 2>&1 || { echo "ParallelCluster CLI required. Install: pip install aws-parallelcluster" >&2; exit 1; }
 command -v aws >/dev/null 2>&1 || { echo "AWS CLI required" >&2; exit 1; }
+command -v jq >/dev/null 2>&1 || { echo "jq required. Install: brew install jq (macOS) or apt-get install jq (Ubuntu) or yum install jq (RHEL/CentOS)" >&2; exit 1; }
 
 echo -n "Verifying AWS credentials..."
 aws sts get-caller-identity >/dev/null 2>&1 || { echo " AWS credentials not configured or expired" >&2; exit 1; }
 echo " verified"
 
-DATE=$(date +%b%d-%Y%H%M)
-# def_region=""
-# def_key_path=""
-# def_headnode_subnet_id=""
-# def_compute_subnet_id=""
-# def_custom_ami=""
-# def_os_type=""
+DATE=$(date +%Y%m%d%H%M%S)
+
+# Get default values from config file
+source ../../_config/pcluster-adv.cfg 2>/dev/null || true
+
+# Hard coded variables
+HEADNODE_INSTANCE_TYPE="m6idn.2xlarge"
+BATCH_INSTANCE_TYPE="m6idn.xlarge"
+BATCH_MIN_COUNT=2
+BATCH_MAX_COUNT=64
 
 # Get user input
 read -p "Cluster name [adv-cluster-${DATE}]: " CLUSTER_NAME
@@ -51,8 +55,24 @@ HEADNODE_SUBNET_ID=${HEADNODE_SUBNET_ID:-${def_headnode_subnet_id}}
 read -p "Compute subnet ID [${def_compute_subnet_id}]: " COMPUTE_SUBNET_ID 
 COMPUTE_SUBNET_ID=${COMPUTE_SUBNET_ID:-${def_compute_subnet_id}}
 
-read -p "Post-creation script path (optional, press enter to skip): " POST_SCRIPT
-POST_SCRIPT=${POST_SCRIPT:-""}
+read -p "Placement group name [${def_placement_group_name}]: " PLACEMENT_GROUP_NAME
+PLACEMENT_GROUP_NAME=${PLACEMENT_GROUP_NAME:-${def_placement_group_name}}
+
+# Set SSH user based on OS type
+case "$OS_TYPE" in
+    "rocky9"|"rocky8")
+        SSH_USER="rocky"
+        ;;
+    "rhel8"|"rhel9")
+        SSH_USER="ec2-user"
+        ;;
+    "ubuntu"*)
+        SSH_USER="ubuntu"
+        ;;
+    *)
+        SSH_USER="ec2-user"
+        ;;
+esac
 
 # Run Ansible playbook
 ansible-playbook -i pcluster-adv-inventory.ini pcluster-adv-playbook.yml \
@@ -62,7 +82,12 @@ ansible-playbook -i pcluster-adv-inventory.ini pcluster-adv-playbook.yml \
     -e "headnode_subnet_id=$HEADNODE_SUBNET_ID" \
     -e "compute_subnet_id=$COMPUTE_SUBNET_ID" \
     -e "custom_ami=$CUSTOM_AMI" \
-    -e "post_script=$POST_SCRIPT" \
+    -e "headnode_instance_type=$HEADNODE_INSTANCE_TYPE" \
+    -e "batch_instance_type=$BATCH_INSTANCE_TYPE" \
+    -e "batch_min_count=$BATCH_MIN_COUNT" \
+    -e "batch_max_count=$BATCH_MAX_COUNT" \
+    -e "ssh_user=$SSH_USER" \
+    -e "placement_group_name=$PLACEMENT_GROUP_NAME" \
     -e "key_path=$KEY_PATH" \
     -e "os_type=$OS_TYPE" \
     -e "ansible_python_interpreter=python3" \
