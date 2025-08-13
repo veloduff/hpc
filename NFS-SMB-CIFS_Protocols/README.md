@@ -80,8 +80,8 @@ for every application.
     </tr>
     <tr>
       <td><strong>Security</strong></td>
-      <td>Not built-in (can use AUTH_SYS, Kerberos (external)),<br> Multi ports complicate firewall configuration</td>
-      <td>Built-in Kerberos, integration with Active Directory,<br> rich ACL support</td>
+      <td>Not built-in (optional AUTH_SYS, Kerberos),<br> Multiple ports complicate firewall config</td>
+      <td>Built-in Kerberos, integration with Active Directory, and rich ACL support</td>
     </tr>
     <tr>
       <td><strong>Ports</strong></td>
@@ -91,7 +91,7 @@ for every application.
     <tr>
       <td><strong>Operations</strong></td>
       <td>Simple RPC calls</td>
-      <td>Compound operations, reduce network round trips,<br> improved caching with delegations</td>
+      <td>Compound operations, reduced network round trips, delegations improve caching (see below)</td>
     </tr>
     <tr>
       <td><strong>Caching</strong></td>
@@ -105,6 +105,25 @@ for every application.
     </tr>
   </tbody>
 </table>
+
+### NFSv4 Delegations Explained
+
+**Delegations** are NFSv4's mechanism for improving caching performance by granting clients temporary authority to manage files locally:
+
+**How Delegations Work:**
+- **Read Delegation**: Server tells client "you can cache this file's data and attributes locally - I'll notify you if another client wants to modify it"
+- **Write Delegation**: Server tells client "you have exclusive access - cache writes locally and flush when done"
+
+**Performance Benefits:**
+- **Reduced Network Traffic**: Client can serve reads from local cache without contacting server
+- **Faster Metadata Operations**: File attributes (size, timestamps) cached locally
+- **Better Write Performance**: Multiple writes can be batched before sending to server
+- **Consistency Guaranteed**: Server recalls delegations when other clients need access
+
+**Summary**
+* NFSv3 - **without delegations**: Every file read/stat results in a **network round trip**
+* NFSv4 - **with delegations**: First access gets delegation subsequent **reads from local cache**
+
 
 ## NetApp ONTAP on AWS
 
