@@ -14,6 +14,15 @@ class GPUBenchmarkSuite:
         if build_dir is None:
             build_dir = os.path.expanduser("~/cuda-samples-12.8/build/Samples")
         self.build_dir = Path(build_dir)
+        
+        # Check if CUDA samples directory exists
+        if not self.build_dir.exists():
+            print(f"ERROR: CUDA samples directory not found: {self.build_dir}")
+            print("Please build CUDA samples first:")
+            print("  cd ~/cuda-samples-12.8 && mkdir -p build && cd build")
+            print("  cmake .. && make -j$(nproc)")
+            sys.exit(1)
+        
         self.results = {
             "system_info": {},
             "device_info": {},
